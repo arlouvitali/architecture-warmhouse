@@ -1,0 +1,15 @@
+{
+  "name": "temperature-api",
+  "version": "1.0.0",
+  "description": "Temperature API service for smart home",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
