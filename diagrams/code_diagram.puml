@@ -1,0 +1,18 @@
+@startuml Code Diagram
+title Диаграмма последовательности: Получение температуры
+
+actor Пользователь
+participant API_Gateway
+participant Monitoring_Service
+participant Temperature_API
+participant Monitoring_DB
+
+Пользователь -> API_Gateway: GET /temperature?location=LivingRoom
+API_Gateway -> Monitoring_Service: Forward request
+Monitoring_Service -> Temperature_API: HTTPS GET /temperature?location=LivingRoom
+Temperature_API --> Monitoring_Service: JSON response with temperature
+Monitoring_Service -> Monitoring_DB: Save telemetry data
+Monitoring_Service --> API_Gateway: Return temperature data
+API_Gateway --> Пользователь: JSON response
+
+@enduml

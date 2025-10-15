@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Monitoring API
+  version: 1.0.0
+  description: API for monitoring telemetry data from devices
+
+servers:
+  - url: http://monitoring-service:8080/api/v1
+
+paths:
+  /telemetry-records:
+    get:
+      summary: Get all telemetry records
+      parameters:
+        - name: device_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by device ID
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Limit number of records
+      responses:
+        '200':
+          description: List of telemetry records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelemetryRecord'
+              examples:
+                telemetryRecord:
+                  value:
+                    - id: 1
+                      device_id: 1
+                      value: 23.5
+                      unit: "Celsius"
+                      timestamp: "2023-10-01T12:00:00Z"
+    post:
+      summary: Create new telemetry record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelemetryRecordCreate'
+            examples:
+              telemetryRecord:
+                value:
+                  device_id: 1
+                  value: 25.0
+                  unit: "Celsius"
+      responses:
+        '201':
+          description: Telemetry record created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelemetryRecord'
+        '400':
+          description: Bad request
+
+  /telemetry-records/{id}:
+    get:
+      summary: Get telemetry record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Telemetry record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelemetryRecord'
+        '404':
+          description: Telemetry not found
+
+components:
+  schemas:
+    TelemetryRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        device_id:
+          type: integer
+        value:
+          type: number
+        unit:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+    TelemetryRecordCreate:
+      type: object
+      required:
+        - device_id
+        - value
+        - unit
+      properties:
+        device_id:
+          type: integer
+        value:
+          type: number
+        unit:
+          type: string

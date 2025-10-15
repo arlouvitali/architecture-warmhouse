@@ -1,0 +1,20 @@
+@startuml Components Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(device_service, "Device Management Service") {
+    Component(api_handler, "API Handler", "Gin Router", "Обработка HTTP запросов от API Gateway")
+
+    Component(device_business_logic, "Device Service", "Go Service", "Бизнес-логика управления устройствами (регистрация, команды, статус)")
+
+    Component(device_repo, "Device Repository", "Go/PGX", "Доступ к БД устройств (CRUD операции)")
+
+    Component(command_sender, "Command Sender", "Go/HTTPS", "Отправка команд устройствам через HTTPS")
+}
+
+Rel(api_handler, device_business_logic, "Вызов методов")
+
+Rel(device_business_logic, device_repo, "CRUD операции")
+
+Rel(device_business_logic, command_sender, "Отправка команд")
+
+@enduml
