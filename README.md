@@ -97,7 +97,6 @@ ER-диаграмма представлена в файле [diagrams/er_diagra
 - Device Management API: [api/device_api.yaml](api/device_api.yaml) (эндпоинты для CRUD домов, комнат, типов устройств, устройств)
 - Monitoring API: [api/monitoring_api.yaml](api/monitoring_api.yaml) (эндпоинты для получения и создания телеметрии)
 - Scenario API: [api/scenario_api.yaml](api/scenario_api.yaml) (эндпоинты для CRUD сценариев с полем status для активации/деактивации)
-- Temperature API: [api/temperature_api.yaml](api/temperature_api.yaml) (эндпоинты для получения температуры)
 
 # Задание 5. Работа с docker и docker-compose
 
