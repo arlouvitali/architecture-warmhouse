@@ -1,0 +1,14 @@
+@startuml Context Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "Пользователь", "Пользователь умного дома, управляющий отоплением и просматривающий температуру")
+
+System(smarthome_monolith, "Монолитное приложение Smart Home", "Приложение на Go для управления сенсорами и мониторинга температуры")
+
+System_Ext(temperature_api, "Temperature API", "Внешний сервис для получения данных о температуре")
+
+Rel(user, smarthome_monolith, "Управляет отоплением и просматривает температуру")
+
+Rel(smarthome_monolith, temperature_api, "Получает данные о температуре")
+
+@enduml

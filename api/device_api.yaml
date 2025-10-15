@@ -1,0 +1,465 @@
+openapi: 3.0.0
+info:
+  title: Device Management API
+  version: 1.0.0
+  description: API for managing smart home devices, houses, rooms, and device types
+
+servers:
+  - url: http://device-service:8080/api/v1
+
+paths:
+  /houses:
+    get:
+      summary: Get all houses
+      responses:
+        '200':
+          description: List of houses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/House'
+              examples:
+                houses:
+                  value:
+                    - id: 1
+                      user_id: 1
+                      name: "My House"
+                      address: "123 Main St"
+    post:
+      summary: Create a new house
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HouseCreate'
+            examples:
+              house:
+                value:
+                  user_id: 1
+                  name: "New House"
+                  address: "456 Elm St"
+      responses:
+        '201':
+          description: House created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+        '400':
+          description: Bad request
+        
+
+  /houses/{id}:
+    get:
+      summary: Get house by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: House found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+        '404':
+          description: House not found
+    put:
+      summary: Update house
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HouseUpdate'
+      responses:
+        '200':
+          description: House updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+        '404':
+          description: House not found
+    delete:
+      summary: Delete house
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: House deleted
+        '404':
+          description: House not found
+        
+
+  /rooms:
+    get:
+      summary: Get all rooms
+      responses:
+        '200':
+          description: List of rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+    post:
+      summary: Create a new room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomCreate'
+      responses:
+        '201':
+          description: Room created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '400':
+          description: Bad request
+        
+
+  /rooms/{id}:
+    get:
+      summary: Get room by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Room found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '404':
+          description: Room not found
+    put:
+      summary: Update room
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomUpdate'
+      responses:
+        '200':
+          description: Room updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '404':
+          description: Room not found
+    delete:
+      summary: Delete room
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Room deleted
+        '404':
+          description: Room not found
+
+  /device-types:
+    get:
+      summary: Get all device types
+      responses:
+        '200':
+          description: List of device types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceType'
+
+  /device-types/{id}:
+    get:
+      summary: Get device type by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device type found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceType'
+        '404':
+          description: Device type not found
+
+  /devices:
+    get:
+      summary: Get all devices
+      responses:
+        '200':
+          description: List of devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+              examples:
+                devices:
+                  value:
+                    - id: 1
+                      room_id: 1
+                      type_id: 1
+                      name: "Living Room Thermometer"
+                      router_ip: "192.168.1.1"
+                      mac_address: "AA:BB:CC:DD:EE:FF"
+                      status: "active"
+        
+    post:
+      summary: Create a new device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCreate'
+            examples:
+              device:
+                value:
+                  room_id: 1
+                  type_id: 1
+                  name: "New Thermometer"
+      responses:
+        '201':
+          description: Device created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '400':
+          description: Bad request
+        
+
+  /devices/{id}:
+    get:
+      summary: Get device by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: Device not found
+    put:
+      summary: Update device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceUpdate'
+      responses:
+        '200':
+          description: Device updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: Device not found
+    delete:
+      summary: Delete device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device deleted
+        '404':
+          description: Device not found
+        
+
+components:
+  schemas:
+    House:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    HouseCreate:
+      type: object
+      required:
+        - user_id
+        - name
+        - address
+      properties:
+        user_id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+    HouseUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+        house_id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    RoomCreate:
+      type: object
+      required:
+        - house_id
+        - name
+      properties:
+        house_id:
+          type: integer
+        name:
+          type: string
+    RoomUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+    DeviceType:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
+        room_id:
+          type: integer
+        type_id:
+          type: integer
+        name:
+          type: string
+        router_ip:
+          type: string
+        mac_address:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DeviceCreate:
+      type: object
+      required:
+        - room_id
+        - type_id
+        - name
+      properties:
+        room_id:
+          type: integer
+        type_id:
+          type: integer
+        name:
+          type: string
+    DeviceUpdate:
+      type: object
+      properties:
+        room_id:
+          type: integer
+        type_id:
+          type: integer
+        name:
+          type: string
+        router_ip:
+          type: string
+        mac_address:
+          type: string
+        status:
+          type: string

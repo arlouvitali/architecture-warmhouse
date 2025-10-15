@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: Scenario API
+  version: 1.0.0
+  description: API for managing smart home scenarios
+
+servers:
+  - url: http://scenario-service:8080/api/v1
+
+paths:
+  /scenarios:
+    get:
+      summary: Get all scenarios
+      responses:
+        '200':
+          description: List of scenarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scenario'
+              examples:
+                scenarios:
+                  value:
+                    - id: 1
+                      house_id: 1
+                      name: "Evening Lighting"
+                      description: "Turn on lights when temperature drops"
+                      schedule: "0 18 * * *"
+                      conditions: {"temperature": {"lt": 20}}
+                      actions: {"lights": {"turn_on": true}}
+    post:
+      summary: Create a new scenario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScenarioCreate'
+            examples:
+              scenario:
+                value:
+                  house_id: 1
+                  name: "Morning Alarm"
+                  description: "Wake up routine"
+                  schedule: "0 7 * * 1-5"
+                  conditions: {}
+                  actions: {"alarm": {"play": "wake_up.mp3"}}
+      responses:
+        '201':
+          description: Scenario created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        '400':
+          description: Bad request
+
+  /scenarios/{id}:
+    get:
+      summary: Get scenario by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Scenario found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        '404':
+          description: Scenario not found
+    put:
+      summary: Update scenario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScenarioUpdate'
+      responses:
+        '200':
+          description: Scenario updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        '404':
+          description: Scenario not found
+    delete:
+      summary: Delete scenario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Scenario deleted
+        '404':
+          description: Scenario not found
+
+components:
+  schemas:
+    Scenario:
+      type: object
+      properties:
+        id:
+          type: integer
+        house_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        schedule:
+          type: string
+        conditions:
+          type: object
+        actions:
+          type: object
+        status:
+          type: string
+          enum: [activated, deactivated]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    ScenarioCreate:
+      type: object
+      required:
+        - house_id
+        - name
+        - schedule
+        - conditions
+        - actions
+      properties:
+        house_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        schedule:
+          type: string
+        conditions:
+          type: object
+        actions:
+          type: object
+    ScenarioUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        schedule:
+          type: string
+        conditions:
+          type: object
+        actions:
+          type: object
+        status:
+          type: string
+          enum: [activated, deactivated]

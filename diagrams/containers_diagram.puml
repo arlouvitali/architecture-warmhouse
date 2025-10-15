@@ -1,0 +1,76 @@
+@startuml Containers Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Пользователь", "Пользователь умного дома")
+
+System_Ext(mobile_app, "Mobile App", "Mobile Application", "Мобильное приложение для доступа к системе и регистрации устройств")
+
+System_Boundary(smarthome_system, "Экосистема Smart Home") {
+    Container(api_gateway, "API Gateway", "Nginx/Kong", "Шлюз для маршрутизации запросов от веб-приложения и мобильного приложения")
+
+    Container(identity_service, "Identity Provider Service", "Go/Gin", "Аутентификация, авторизация и управление пользователями")
+
+    Container(device_service, "Device Management Service", "Go/Gin", "Регистрация устройств, настройка параметров, отправка команд (включить/выключить отопление, открыть ворота, включить свет), управление состоянием устройств")
+
+    Container(monitoring_service, "Monitoring Service", "Go/Gin", "Сбор и обработка телеметрии, удалённое наблюдение")
+
+    Container(scenario_service, "Scenario Service", "Go/Gin", "Управление сценариями работы устройств, запуск по расписанию")
+
+    ContainerDb(identity_db, "Identity Database", "PostgreSQL", "Хранение данных пользователей и аутентификации")
+
+    ContainerDb(device_db, "Device Database", "PostgreSQL", "Хранение данных устройств")
+
+    ContainerDb(monitoring_db, "Monitoring Database", "PostgreSQL", "Хранение телеметрии и истории")
+
+    ContainerDb(scenario_db, "Scenario Database", "PostgreSQL", "Хранение сценариев и расписаний")
+
+    ContainerQueue(message_broker, "Message Broker", "RabbitMQ", "Асинхронная коммуникация между сервисами")
+}
+
+System_Ext(wifi_router, "WiFi Router", "Network Device", "Маршрутизатор для локальной сети, через который устройства подключаются к интернету")
+
+System_Ext(device_modules, "Device Modules", "Various", "Модули устройств партнеров (температура, свет, ворота, другие). Регистрируются в Device Management Service и Monitoring Service через API или конфигурацию")
+
+Rel(user, mobile_app, "Доступ к мобильному приложению")
+
+Rel(mobile_app, api_gateway, "HTTPS", "Управление устройствами, настройка сценариев, просмотр телеметрии, регистрация устройств через интернет")
+
+Rel(api_gateway, identity_service, "HTTP", "Проверка аутентификации и управление пользователями")
+
+Rel(api_gateway, device_service, "HTTP", "Управление устройствами (регистрация, команды)")
+
+Rel(api_gateway, monitoring_service, "HTTP", "Просмотр телеметрии и истории")
+
+Rel(api_gateway, scenario_service, "HTTP", "Настройка сценариев работы устройств")
+
+Rel(identity_service, identity_db, "TCP")
+
+Rel(device_service, device_db, "TCP")
+
+Rel(monitoring_service, monitoring_db, "TCP")
+
+Rel(scenario_service, scenario_db, "TCP")
+
+Rel(scenario_service, monitoring_service, "HTTP", "Получение телеметрии для условий сценариев")
+
+Rel(scenario_service, device_service, "HTTP", "Отправка команд на управление устройствами по сценариям")
+
+Rel(api_gateway, device_service, "HTTP", "Маршрутизация запросов от устройств")
+
+Rel(api_gateway, monitoring_service, "HTTP", "Маршрутизация запросов от устройств")
+
+Rel(monitoring_service, wifi_router, "HTTPS", "Синхронный запрос телеметрии от устройств через роутер")
+
+Rel(device_service, wifi_router, "HTTPS", "Отправка команд на управление устройствами через роутер")
+
+Rel(wifi_router, device_modules, "Local Network", "Передача данных между роутером и устройствами")
+
+Rel(device_modules, wifi_router, "Local Network", "Отправка телеметрии и регистрация через роутер")
+
+Rel(wifi_router, api_gateway, "HTTPS", "Регистрация устройств и отправка телеметрии")
+
+Rel(wifi_router, mobile_app, "Local Network", "Взаимодействие с мобильным приложением для настройки и регистрации устройств")
+
+Rel(scenario_service, message_broker, "AMQP", "Отправка команд на активацию сценариев (например, включение устройств по расписанию)")
+
+@enduml

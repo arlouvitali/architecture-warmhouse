@@ -1,0 +1,66 @@
+@startuml ER Diagram
+!define table(x) entity x << (T, white) >>
+!define primary_key(x) <b>x</b>
+!define foreign_key(x) <i>x</i>
+
+table(User) {
+  primary_key(id) : SERIAL
+  name : VARCHAR(100)
+  email : VARCHAR(100)
+  password_hash : VARCHAR(255)
+}
+
+table(House) {
+  primary_key(id) : SERIAL
+  foreign_key(user_id) : INTEGER
+  name : VARCHAR(100)
+  address : VARCHAR(255)
+}
+
+table(Room) {
+  primary_key(id) : SERIAL
+  foreign_key(house_id) : INTEGER
+  name : VARCHAR(100)
+}
+
+table(DeviceType) {
+  primary_key(id) : SERIAL
+  name : VARCHAR(50)
+}
+
+table(Device) {
+  primary_key(id) : SERIAL
+  foreign_key(room_id) : INTEGER
+  foreign_key(type_id) : INTEGER
+  name : VARCHAR(100)
+  router_ip : VARCHAR(45)
+  mac_address : VARCHAR(17)
+  status : VARCHAR(20)
+}
+
+table(TelemetryRecord) {
+  primary_key(id) : SERIAL
+  foreign_key(device_id) : INTEGER
+  value : FLOAT
+  unit : VARCHAR(20)
+  timestamp : TIMESTAMP
+}
+
+table(Scenario) {
+  primary_key(id) : SERIAL
+  foreign_key(house_id) : INTEGER
+  name : VARCHAR(100)
+  description : TEXT
+  schedule : VARCHAR(100)
+  conditions : JSONB
+  actions : JSONB
+}
+
+User ||--o{ House : "1 to many"
+House ||--o{ Room : "1 to many"
+Room ||--o{ Device : "1 to many"
+House ||--o{ Scenario : "1 to many"
+Device }o--|| DeviceType : "many to 1"
+Device ||--o{ TelemetryRecord : "1 to many"
+
+@enduml
